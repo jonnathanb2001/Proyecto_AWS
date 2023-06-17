@@ -6,9 +6,12 @@
 package com.tendencias.proyectousuario.controller;
 
 import com.tendencias.proyectousuario.model.Usuario;
+import com.tendencias.proyectousuario.repository.UsuarioRepository;
+import com.tendencias.proyectousuario.service.S3Service;
 import com.tendencias.proyectousuario.service.UsuarioServiceImpl;
 import java.util.List;
 import io.swagger.v3.oas.annotations.Operation;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +32,27 @@ import org.springframework.web.bind.annotation.RestController;
 public class UsuarioController {
 
     @Autowired
-    UsuarioServiceImpl usuarioService;
+    UsuarioRepository usuarioRepository;
+
+    @Autowired
+    S3Service s3Service;
+
+    @GetMapping
+    List<Usuario> getAll() {
+        return usuarioRepository.findAll()
+                .stream()
+                .peek(usuario -> usuario.setFoto(s3Service.getObjectUrl(usuario.getImagenPath())))
+                .collect(Collectors.toList());
+    }
+
+    @PostMapping
+    Usuario create(@RequestBody Usuario usuario) {
+        usuarioRepository.save(usuario);
+        usuario.setFoto(s3Service.getObjectUrl(usuario.getImagenPath()));
+        return usuario;
+    }
+
+    /*
 
     @Operation(summary = "Se obtiene la lista de Usuarios")
     @GetMapping("/listar")
@@ -67,6 +90,7 @@ public class UsuarioController {
     public ResponseEntity<Usuario> elimiarUsuario(@PathVariable Integer id) {
         usuarioService.delete(id);
         return new ResponseEntity<>(HttpStatus.OK);
-    }
+    }¨
 
+     */
 }

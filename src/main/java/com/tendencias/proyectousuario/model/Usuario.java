@@ -14,11 +14,15 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Transient;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import java.util.List;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 /**
  *
@@ -26,6 +30,8 @@ import lombok.Data;
  */
 @Data
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 public class Usuario {
 
     @Id
@@ -42,12 +48,20 @@ public class Usuario {
     @Column(name = "clave")
     private String clave;
 
-    @Email(message = "Debe ingresar una dirección de correo válida")
+    @Email(message = "Debe ingresar una direcciÃ³n de correo vÃ¡lida")
     @Column(name = "email")
     private String email;
 
     @Column(name = "estado")
     private int estado;
+
+    private String imagenPath;
+
+    @Transient
+    private String foto;
+    
+    @Transient
+    private String cedula;
 
     @ManyToOne
     @JoinColumn(name = "id_persona", referencedColumnName = "id_persona")
@@ -55,6 +69,6 @@ public class Usuario {
 
     @ManyToOne
     @JoinColumn(name = "id_rol", referencedColumnName = "id_rol")
-    private Rol rol; 
+    private Rol rol;
 
 }
